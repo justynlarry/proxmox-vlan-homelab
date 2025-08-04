@@ -136,4 +136,188 @@ Use these credentials to log in. You will then be able to proceed with the insta
 
 Once installation is complete, remove the ISO and reboot the VM.
 
+# 2.4 ***UNDER CONSTRUCTION***
+Comprehensive Blueprint: OPNsense "Router on a Stick" on Proxmox
+This guide consolidates all the steps, troubleshooting, and best practices we've discussed into a single, easy-to-follow plan.
+
+Phase 1: Proxmox and OPNsense VM Setup
+Goal: Create an OPNsense VM and configure the underlying Proxmox network to handle VLAN-tagged traffic.
+
+Proxmox Network Bridge Configuration:
+
+Log into your Proxmox web GUI.
+
+Go to Datacenter -> <Your Proxmox Node> -> System -> Network.
+
+Identify your physical NIC (enp8s0 in your case) that will connect to your managed switch.
+
+Click Create -> Linux Bridge.
+
+Name: vmbr0
+
+Bridge Ports: enp8s0
+
+VLAN aware: Check this box.
+
+Click Create and then Apply Configuration.
+
+Create the OPNsense VM:
+
+Click Create VM.
+
+General: Give it a name (e.g., opnsense-router-on-a-stick).
+
+OS: Select the OPNsense ISO you've uploaded.
+
+System: Defaults are fine.
+
+Disks: Use UFS as the file system during installation. A 16-32 GB disk is sufficient.
+
+CPU: 1-2 cores.
+
+Memory: 1-2 GB.
+
+Network:
+
+Bridge: Select vmbr0.
+
+VLAN Tag: Leave this field blank.
+
+Model: Select VirtIO (virtio). This is crucial for the installer to detect the NIC.
+
+OPNsense Installation:
+
+Start the OPNsense VM and open the console.
+
+Log in with the default credentials: installer / opnsense.
+
+Follow the installation prompts.
+
+When asked about the file system, choose UFS.
+
+When asked to assign interfaces, manually type vtnet0 and assign it to the LAN interface.
+
+Do not assign a WAN interface.
+
+Complete the installation and reboot.
+
+Phase 2: OPNsense Initial Configuration
+Goal: Establish network access to the OPNsense GUI and configure your VLANs.
+
+Initial Access to OPNsense Web GUI:
+
+On a separate machine or a temporary VM, connect to the vmbr0 bridge (with no VLAN tag).
+
+Manually set the client's IP to be in the same subnet as OPNsense's default LAN IP (192.168.1.1). For example, use 192.168.1.100.
+
+In a web browser on that client, navigate to https://192.168.1.1.
+
+Log in with the default credentials: root / opnsense.
+
+Change the root password immediately.
+
+Assign VLAN Interfaces:
+
+Go to Interfaces -> Assignments -> VLANs.
+
+Click + to add a VLAN for each of your networks (e.g., Management, Cluster).
+
+Parent interface: vtnet0
+
+VLAN tag: The VLAN ID (e.g., 10 for Management, 20 for Cluster, etc.).
+
+Description: A meaningful name for clarity.
+
+Go to Interfaces -> Assignments and assign each of these newly created VLANs to a new interface (e.g., OPT1, OPT2).
+
+Configure Each VLAN Interface:
+
+Go to Interfaces -> [Your VLAN Interface] (e.g., Management, Cluster).
+
+Check the "Enable" box.
+
+Description: A clear name.
+
+IPv4 Configuration Type: Static IPv4.
+
+IPv4 Address: A unique IP address for that VLAN, typically the first usable IP (e.g., 10.0.10.1/24 for Management, 10.0.20.1/24 for Cluster).
+
+Leave all other settings at their defaults for now.
+
+Repeat for each VLAN.
+
+Click Save and then Apply changes.
+
+Note: The WAN/CARP VLAN (VLAN 99) should be created but not enabled or configured at this time. This is for your future redundant setup.
+
+Phase 3: Service and Firewall Configuration
+Goal: Make your VLANs functional by enabling DHCP and allowing traffic to pass.
+
+Configure DHCP for each VLAN:
+
+Go to Services -> DHCPv4 -> [Your VLAN Interface].
+
+Check the "Enable" box.
+
+Subnet: This will be pre-filled (e.g., 10.0.20.0).
+
+Subnet mask: This will be pre-filled (255.255.255.0).
+
+Range: Set a range for dynamic IP addresses (e.g., 10.0.20.100 to 10.0.20.200).
+
+Click Save.
+
+Look for a button or notification to "Start Service" and click it to apply the changes.
+
+Repeat for each active VLAN.
+
+Configure Firewall Rules for Initial Testing:
+
+Go to Firewall -> Rules -> [Your VLAN Interface].
+
+Click + to add a new rule.
+
+Action: Pass.
+
+Interface: Your VLAN interface (e.g., Cluster).
+
+Direction: in.
+
+Protocol: any.
+
+Source: Select [Your VLAN] net (e.g., Cluster net).
+
+Destination: any.
+
+Log: Check this box for easy troubleshooting.
+
+Description: A clear name (e.g., ALLOW all traffic from Cluster VLAN).
+
+Click Save and then Apply changes.
+
+Repeat for each active VLAN.
+
+Phase 4: Final Testing
+Goal: Validate that your setup is working correctly.
+
+Managed Switch Configuration:
+
+Log into your managed switch.
+
+Configure the port connected to your Proxmox host as a trunk port that is a tagged member of all your OPNsense VLANs.
+
+Configure an access port for each VLAN you want to test. Set the PVID for each port to the corresponding VLAN ID (e.g., PVID 10 for a port you'll plug a management computer into).
+
+Test Connectivity:
+
+Plug a device into one of the configured access ports.
+
+Verify that the device automatically receives an IP address from the correct OPNsense DHCP server.
+
+Test internet connectivity.
+
+Check the Firewall -> Log Files -> Live View in OPNsense to see your traffic being passed.
+
+
+
 
