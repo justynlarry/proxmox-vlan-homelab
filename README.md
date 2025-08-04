@@ -34,3 +34,49 @@ VLAN ID    Purpose        Subnet
 70         ---            10.0.70.0/24
 80         Security       10.0.80.0/24
 99         WAN / CARP     Public/RFC1918
+```
+
+# 1.1 Change Node interface configuration in /etc/network/interfaces
+- First, make a backup of the interfaces file:
+```bash
+cp /etc/network/interfaces /etc/network/interfaces.bak
+```
+- Then alter the file to allow both flat and VLAN transmission
+```bash
+auto lo
+iface lo inet loopback
+
+iface enp8s0 inet manual
+
+# Untagged Interface from setup (192.168.0.X)
+auto vmbr0
+iface vmbr0 inet static
+    address 192.168.0.X/24
+    gateway 192.168.0.1
+    bridge-ports enp8s0
+    bridge-stp off
+    bridge-fd 0
+
+# VLAN 20 Interface for Cluster (10.0.20.0/24)
+auto vmbr0.20
+iface vmbr0.20 inet static
+    address 10.0.20.X     # Replace with your new VLAN IP Address
+    netmask 255.255.255.0
+#    gateway 10.0.20.1    # You can only have one default gateway, for the time being, this needs to be commented out
+
+iface wlp7s0 inet manual
+
+source /etc/network/interfaces.d/*
+```
+
+- Apply changes
+```bash
+ifrelaod -a
+```
+
+# 1.2 Update the VLAN Settings in the Proxmox GUI
+
+- In the Proxmox GUI navigate to the Network tab for the node you're transitioning:<NODE> -> System -> Network
+  - Highlight the Node's Network Interface and click 'Edit'
+  - On the right side of the the 'Edit: Linux Bridge' pop-up, click VLAN Aware, and 'OK'
+<img width="594" height="274" alt="image" src="https://github.com/user-attachments/assets/f529f80d-319d-4d30-95b3-0f4a99247278" />
