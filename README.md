@@ -79,5 +79,5 @@ ifrelaod -a
 - In the Proxmox GUI navigate to the Network tab for the node you're transitioning:<NODE> -> System -> Network
   - Highlight the Node's Network Interface and click 'Edit'
   - On the right side of the the 'Edit: Linux Bridge' pop-up, click VLAN Aware, and 'OK'
-file:///home/larryman/Pictures/Screenshots/Screenshot%20from%202025-08-04%2011-15-05.png<img width="989" height="418" alt="image" src="https://github.com/user-attachments/assets/354d23ee-1d47-4803-933d-008338b7bcbf" />
+file:///home/larryman/Pictures/Screenshots/Screenshot%20from%202025-08-04%2011-15-05.png<img width="450" height="auto" alt="screenshot" src="https://github.com/user-attachments/assets/354d23ee-1d47-4803-933d-008338b7bcbf" />
 
