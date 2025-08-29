@@ -4,7 +4,8 @@
 ![CARP](https://img.shields.io/badge/CARP-800000?style=for-the-badge&logo=freebsd&logoColor=white)
 
 # Requirements
-Switch: Must be a managed switch, I'm using a Netgear GS108Ev4, VLAN-capable.
+Switch: Must be a managed switch, I'm using a Netgear GS108Ev4, VLAN-capable -> but not capable of handling the demands of CARP/High Availability.
+  Until a new more robust Router has been acquired, this project is on hold.
 VLANs configured: Yes (e.g., Default, Management, Cluster, Monitoring, Security, etc.).
 Current Router Mode: Basic 802.1Q VLAN.
 
