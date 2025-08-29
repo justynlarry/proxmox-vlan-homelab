@@ -90,8 +90,8 @@ source /etc/network/interfaces.d/*
 ```
 
 Example: OPNsenseGreen-Secondary Node (pveGreen)
-bash
-```
+
+```bash
 auto lo
 iface lo inet loopback
 
@@ -147,42 +147,42 @@ ip route
 
 Should show both the default VLAN 10 and the cluster VLAN 20 routes.
 
-Phase 3 – Switch Configuration (Sample)
-Port	Device	VLAN/Role
-1	pveGreen	WAN
-2	pveRed	WAN
-3	pveGold	Flat Network
-4	pveBlack	Flat Network
-5	pveGreen	LAN
-6	pveRed	LAN
-7	bigBlue	LAN
-8	ISP Access	Access VLAN 1
+# Phase 3 – Switch Configuration (Sample)
+Port	Device	    VLAN/Role
+1	    pveGreen	  WAN
+2	    pveRed	    WAN
+3    	pveGold	    Flat Network
+4	    pveBlack	  Flat Network
+5	    pveGreen	  LAN
+6	    pveRed	    LAN
+7	    bigBlue	    LAN
+8	    ISP Access	Access VLAN 1
 
-Remaining VLANs are configured similarly, each with their own VLAN ID and subnet.
+* Remaining VLANs are configured similarly, each with their own VLAN ID and subnet.
 
-Phase 4 – OPNsense VM Installation
+# Phase 4 – OPNsense VM Installation
 
-Create two VMs in Proxmox: OPNsenseRed-Primary and OPNsenseGreen-Secondary.
+1. Create two VMs in Proxmox: OPNsenseRed-Primary and OPNsenseGreen-Secondary.
 
-Assign interfaces as per VLAN bridge mapping:
+2. Assign interfaces as per VLAN bridge mapping:
 
-OPNsense VM	Management IP	Cluster IP	WAN Interface	LAN Interface	NIC Mapping
-OPNsenseRed-Primary	10.0.10.11	10.0.20.11	vmbr0 -> vtnet0	vmbr1 -> vtnet1	enp1s0f0 / enp3s0
-OPNsenseGreen-Secondary	10.0.10.12	10.0.20.12	vmbr0 -> vtnet0	vmbr1 -> vtnet1	enp1s0 / enp3s0
+OPNsense                 VM	Management IP   Cluster IP  	WAN Interface	  LAN Interface	    NIC Mapping
+OPNsenseRed-Primary	     10.0.10.11	        10.0.20.11  	vmbr0 ->        vtnet0 vmbr1 ->   vtnet1	enp1s0f0 / enp3s0
+OPNsenseGreen-Secondary	 10.0.10.12	        10.0.20.12  	vmbr0 ->        vtnet0 vmbr1 ->   vtnet1	enp1s0 / enp3s0
 
-Configure VLAN interfaces in OPNsense as per the VLAN/Subnet Map.
+3. Configure VLAN interfaces in OPNsense as per the VLAN/Subnet Map.
 
-Configure DHCP on OPNsenseRed-Primary for required VLANs (e.g., DMZ50), mirrored to Green via CARP sync.
+4. Configure DHCP on OPNsenseRed-Primary for required VLANs (e.g., DMZ50), mirrored to Green via CARP sync.
 
-Phase 5 – CARP / HA Configuration
+# Phase 5 – CARP / HA Configuration
 
-Define CARP VIPs for each VLAN (LAN, Cluster, Monitoring, Storage, DMZ, LockBox, HASync).
+1. Define CARP VIPs for each VLAN (LAN, Cluster, Monitoring, Storage, DMZ, LockBox, HASync).
 
-Sync OPNsenseGreen-Secondary from the primary for configuration and firewall rules.
+2. Sync OPNsenseGreen-Secondary from the primary for configuration and firewall rules.
 
-Verify failover functionality (note: limited by switch capability; full HA requires a CARP-capable switch).
+3. Verify failover functionality (note: limited by switch capability; full HA requires a CARP-capable switch).
 
-Notes
+# Notes
 
 Switch Limitation: Netgear GS108Ev4 cannot handle CARP failover properly. Full HA testing requires a switch supporting multicast/failover.
 
