@@ -18,34 +18,39 @@ Current Router Mode: Advanced 802.1Q VLAN.
   - Deploy OPNsense HA (CARP) with two nodes using dual-NIC routing.
   - Configure trunk ports for VLAN traffic, leaving certain access ports (e.g., Wi-Fi extender) on VLAN 1.
 
-VLAN/Subnet Map
-VLAN ID	Purpose	Subnet	Gateway
-1	Default/Mgmt	192.168.0.0/24	192.168.0.1
-10	Management	10.0.10.0/24	10.0.10.X
-20	Cluster	10.0.20.0/24	10.0.20.X
-30	Monitoring	10.0.30.0/24	10.0.30.X
-40	Storage	10.0.40.0/24	10.0.40.X
-50	DMZ	10.0.50.0/24	10.0.50.X
-70	LockBox	10.0.70.0/24	10.0.70.X
-90	HASync	10.0.90.0/24	10.0.90.X
+# VLAN/Subnet Map
+# VLAN ID	Purpose	   Subnet	        Gateway
+1	  Default/Mgmt	  192.168.0.0/24  192.168.0.1
+10	Management	    10.0.10.0/24	  10.0.10.X
+20	Cluster	        10.0.20.0/24	  10.0.20.X
+30	Monitoring	    10.0.30.0/24	  10.0.30.X
+40	Storage	        10.0.40.0/24	  10.0.40.X
+50	DMZ	            10.0.50.0/24	  10.0.50.X
+70	LockBox	        10.0.70.0/24	  10.0.70.X
+90	HASync	        10.0.90.0/24	  10.0.90.X
 
-CARP VIP Gateways
+# CARP VIP Gateways
+# VLAN    	CARP VIP
+LAN	        10.0.10.254
+Cluster	    10.0.20.254
+Monitor	    10.0.30.254
+Storage	    10.0.40.254
+DMZ	        10.0.50.254
+LockBox	    10.0.70.254
+HASync	    10.0.90.254
 
-VLAN	CARP VIP
-LAN	10.0.10.254
-Cluster	10.0.20.254
-Monitor	10.0.30.254
-Storage	10.0.40.254
-DMZ	10.0.50.254
-LockBox	10.0.70.254
-HASync	10.0.90.254
-Phase 1 – Configure Proxmox Node Interfaces
+
+# Phase 1 – Configure Proxmox Node Interfaces
 
 Backup network interfaces first:
-
+bash
+```
 cp /etc/network/interfaces /etc/network/interfaces.bak
+```
 
 Example: OPNsenseRed-Primary Node (pveRed)
+bash
+```
 auto lo
 iface lo inet loopback
 
@@ -82,8 +87,11 @@ iface vmbr1.20 inet static
     address 10.0.20.11/24
 
 source /etc/network/interfaces.d/*
+```
 
 Example: OPNsenseGreen-Secondary Node (pveGreen)
+bash
+```
 auto lo
 iface lo inet loopback
 
@@ -119,22 +127,23 @@ iface vmbr1.20 inet static
     address 10.0.20.12/24
 
 source /etc/network/interfaces.d/*
-
+```
 
 Apply changes:
-
+```bash
 ifreload -a
+```
 
-Phase 2 – Proxmox GUI Configuration
+# Phase 2 – Proxmox GUI Configuration
 
 Navigate to Node -> System -> Network.
 
 Edit vmbr1 (LAN trunk), check VLAN Aware, save.
 
 Verify interfaces:
-
+```bash
 ip route
-
+```
 
 Should show both the default VLAN 10 and the cluster VLAN 20 routes.
 
