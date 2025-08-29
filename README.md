@@ -43,14 +43,14 @@ HASync	    10.0.90.254
 # Phase 1 – Configure Proxmox Node Interfaces
 
 Backup network interfaces first:
-bash
-```
+
+```bash
 cp /etc/network/interfaces /etc/network/interfaces.bak
 ```
 
 Example: OPNsenseRed-Primary Node (pveRed)
-bash
-```
+
+```bash
 auto lo
 iface lo inet loopback
 
