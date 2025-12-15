@@ -19,25 +19,25 @@ Current Router Mode: Advanced 802.1Q VLAN.
   - Configure trunk ports for VLAN traffic, leaving certain access ports (e.g., Wi-Fi extender) on VLAN 1.
 
 # VLAN/Subnet Map
-# VLAN ID	Purpose	   Subnet	        Gateway
-1	  Default/Mgmt	  192.168.0.0/24    192.168.0.1
-10	Management	    10.0.10.0/24	    10.0.10.X
-0	  Cluster	        192.168.0.0/24	  192.168.0.X
-30	Monitoring	    10.0.30.0/24	    10.0.30.X
-40	Storage	        10.0.40.0/24	    10.0.40.X
-50	DMZ	            10.0.50.0/24	    10.0.50.X
-70	LockBox	        10.0.70.0/24	    10.0.70.X
-90	HASync	        10.0.90.0/24	    10.0.90.X
+## VLAN ID	Purpose	   Subnet	        Gateway
+- 1	  Default/Mgmt	  192.168.0.0/24    192.168.0.1
+- 10	Management	    10.0.10.0/24	    10.0.10.X
+- 0	  Cluster	        192.168.0.0/24	  192.168.0.X
+- 30	Monitoring	    10.0.30.0/24	    10.0.30.X
+- 40	Storage	        10.0.40.0/24	    10.0.40.X
+- 50	DMZ	            10.0.50.0/24	    10.0.50.X
+- 70	LockBox	        10.0.70.0/24	    10.0.70.X
+- 90	HASync	        10.0.90.0/24	    10.0.90.X
 
 # CARP VIP Gateways
-# VLAN    	CARP VIP
-LAN	        10.0.10.254
-Cluster	    192.168.0.254
-Monitor	    10.0.30.254
-Storage	    10.0.40.254
-DMZ	        10.0.50.254
-LockBox	    10.0.70.254
-HASync	    10.0.90.254
+## VLAN    	CARP VIP
+- LAN	        10.0.10.254
+- Cluster	    192.168.0.254
+- Monitor	    10.0.30.254
+- Storage	    10.0.40.254
+- DMZ	        10.0.50.254
+- LockBox	    10.0.70.254
+- HASync	    10.0.90.254
 
 
 # Phase 1 – Configure Proxmox Node Interfaces
