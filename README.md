@@ -11,8 +11,8 @@ Current Router Mode: Advanced 802.1Q VLAN.
 
 # Project Overview
 
-#Goal: Transition a 4-node Proxmox cluster and additional bare-metal server to VLANs and deploy two OPNsense VMs in a CARP/HA configuration.
-#High-Level Plan
+# Goal: Transition a 4-node Proxmox cluster and additional bare-metal server to VLANs and deploy two OPNsense VMs in a CARP/HA configuration.
+# High-Level Plan
   - Move Proxmox nodes to dedicated VLANs (Management, Cluster).
   - Add bare-metal Ubuntu server to VLANs.
   - Deploy OPNsense HA (CARP) with two nodes using dual-NIC routing.
@@ -20,19 +20,19 @@ Current Router Mode: Advanced 802.1Q VLAN.
 
 # VLAN/Subnet Map
 # VLAN ID	Purpose	   Subnet	        Gateway
-1	  Default/Mgmt	  192.168.0.0/24  192.168.0.1
-10	Management	    10.0.10.0/24	  10.0.10.X
-20	Cluster	        10.0.20.0/24	  10.0.20.X
-30	Monitoring	    10.0.30.0/24	  10.0.30.X
-40	Storage	        10.0.40.0/24	  10.0.40.X
-50	DMZ	            10.0.50.0/24	  10.0.50.X
-70	LockBox	        10.0.70.0/24	  10.0.70.X
-90	HASync	        10.0.90.0/24	  10.0.90.X
+1	  Default/Mgmt	  192.168.0.0/24    192.168.0.1
+10	Management	    10.0.10.0/24	    10.0.10.X
+0	  Cluster	        192.168.0.0/24	  192.168.0.X
+30	Monitoring	    10.0.30.0/24	    10.0.30.X
+40	Storage	        10.0.40.0/24	    10.0.40.X
+50	DMZ	            10.0.50.0/24	    10.0.50.X
+70	LockBox	        10.0.70.0/24	    10.0.70.X
+90	HASync	        10.0.90.0/24	    10.0.90.X
 
 # CARP VIP Gateways
 # VLAN    	CARP VIP
 LAN	        10.0.10.254
-Cluster	    10.0.20.254
+Cluster	    192.168.0.254
 Monitor	    10.0.30.254
 Storage	    10.0.40.254
 DMZ	        10.0.50.254
